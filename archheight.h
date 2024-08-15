@@ -7,7 +7,7 @@ using namespace std;
 struct Point {
     double x;
     double y;
-    //      ����������ֱ�Ӷ�������ģ���Լ�������
+    //      ????????????????????????????????????????????????????????????????
     Point(double x = 0.0, double y = 0.0) : x(x), y(y) {}
     operator QPointF()const{
         return QPointF(x,y);
@@ -58,12 +58,14 @@ struct Point {
 class ArchHeight
 {
 public:
-    ArchHeight(double height = 10.0,size_t index = 2);
+    ArchHeight();
+    ArchHeight(const double height,const size_t index);
     ~ArchHeight();
 
     vector<vector<Point>> outPiecePoint() const;
     vector<vector<Point>> outDesPoint() const;
     vector<vector<Point>> outSrcPoint() const;
+    vector<vector<Point>> outAdaptPoint() const;
     size_t outIndex() const;
 
 private:
@@ -73,25 +75,32 @@ private:
     void getBezierPrime();
     void getDesPoint();
     void doIsoHeightSeg();
+    void doAdaptiveSampling();      //  NOTE:曲线的自适应采样(非均匀采样) 
     void doComputeChangeTime();
-    void doComputePiecePoint();     //  NOTE:���ݹ���ʱ�����������ľ���λ��
-    double doComputePointLineDist(const size_t& index, const double& begintime, const double& endtime, const double& heighttime);//  NOTE:�������ߵ㵽ֱ�ߵľ���
-    double doComputeArchHeight(const size_t& index, const double& begintime, const double& endtime);//  NOTE:������������֮���Ĺ���
-    Point doComputePoint(const size_t& index, const double& t);    //  NOTE:����ĳһ�������ϵĵ�
+    void doComputePiecePoint();     //  NOTE:??????????????????????????????????????????????λ????
+    void doComputeAdaptPoint();
+    double doComputePointLineDist(const size_t& index, const double& begintime, const double& endtime, const double& heighttime);//  NOTE:????????????????????????????????
+
+    double doComputeArchHeight(const size_t& index, const double& begintime, const double& endtime);//  NOTE:????????????????????????????????????????
+    double Distance(const Point&, const Point&);
+    Point doComputePoint(const size_t& index, const double& t);    //  NOTE:????????????????????????????????
 
 public:
     vector<int> m_ivecPascalTri = { 0,1,3,3,1 };
 
 private:
     size_t m_iIndex = 1;
-    double m_dHeight = 1e1;
+    double m_dHeight = 5;
     double m_dPrecis = 1e-2;
+    int m_dThresholdRatio = 20;
     vector<vector<Point>> m_vecBezier;
     vector<vector<Point>> m_vecPrime;
     vector<vector<Point>> m_vecSrcPoint;
     vector<vector<Point>> m_vecDesPoint;
     vector<vector<Point>> m_vecPiecePoint;
+    vector<vector<Point>> m_vecAdaptPoint;
     vector<vector<double>> m_vecPieceTime;
+    vector<vector<double>> m_vecAdaptTime;
     vector<vector<double>> m_vecChangeTime;
 };
 
