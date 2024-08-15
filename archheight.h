@@ -77,13 +77,13 @@ private:
     void doIsoHeightSeg();
     void doAdaptiveSampling();      //  NOTE:曲线的自适应采样(非均匀采样) 
     void doComputeChangeTime();
-    void doComputePiecePoint();     //  NOTE:??????????????????????????????????????????????λ????
+    void doComputePiecePoint();     //  NOTE:根据拱高分段结果，计算拱高分段点
     void doComputeAdaptPoint();
-    double doComputePointLineDist(const size_t& index, const double& begintime, const double& endtime, const double& heighttime);//  NOTE:????????????????????????????????
+    double doComputePointLineDist(const size_t& index, const double& begintime, const double& endtime, const double& heighttime);//  NOTE:计算点到直线的距离
 
-    double doComputeArchHeight(const size_t& index, const double& begintime, const double& endtime);//  NOTE:????????????????????????????????????????
+    double doComputeArchHeight(const size_t& index, const double& begintime, const double& endtime);//  NOTE:计算两点的拱高
     double Distance(const Point&, const Point&);
-    Point doComputePoint(const size_t& index, const double& t);    //  NOTE:????????????????????????????????
+    Point doComputePoint(const size_t& index, const double& t);    //  NOTE:根据时间计算点
 
 public:
     vector<int> m_ivecPascalTri = { 0,1,3,3,1 };
@@ -92,7 +92,7 @@ private:
     size_t m_iIndex = 1;
     double m_dHeight = 5;
     double m_dPrecis = 1e-2;
-    int m_dThresholdRatio = 20;
+    int m_dThresholdRatio = 60;
     vector<vector<Point>> m_vecBezier;
     vector<vector<Point>> m_vecPrime;
     vector<vector<Point>> m_vecSrcPoint;

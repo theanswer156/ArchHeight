@@ -117,7 +117,12 @@ void ArchHeight::getDesPoint()
         }
     }
 }
-
+/***
+* @brief        : 计算点到直线的距离，即拱高
+* @in_param : index:第几条曲线   begintime:起始时间点     endtime:终止时间    heighttime:拱高点所在的时间
+* @out_param : dDist:点到直线的距离
+* @return : double类型的dDist
+*/
 double ArchHeight::doComputePointLineDist(const size_t& index, const double& begintime, const double& endtime, const double& heighttime)
 {
     if (begintime >= heighttime || heighttime >= endtime)
@@ -141,11 +146,17 @@ double ArchHeight::doComputePointLineDist(const size_t& index, const double& beg
     }
     return dDist;
 }
-
+/***
+* @brief        : 计算曲线变化率发生改变的时间点
+* @in_param : none
+* @out_param : none
+* @return : none
+*/
 void ArchHeight::doComputeChangeTime()
 {
     for (size_t i = 0; i < m_iIndex; ++i) {
         m_vecChangeTime[i].emplace_back(0);
+        //  计算 X 参数方程单调性变化的两个时间点    
         if (true) {
             if (m_vecPrime[0].at(0).x != 0) {
                 double delta = m_vecPrime[i].at(1).x * m_vecPrime[i].at(1).x - 4 * m_vecPrime[i].at(0).x * m_vecPrime[i].at(2).x;
@@ -167,7 +178,7 @@ void ArchHeight::doComputeChangeTime()
                 }
             }
         }
-        //  计算 y 参数方程单调性变化的两个时间点
+        //  计算 Y 参数方程单调性变化的两个时间点
         if (true) {
             if (m_vecPrime[i].at(0).y != 0) {
                 double delta = m_vecPrime[i].at(1).y * m_vecPrime[i].at(1).y - 4 * m_vecPrime[i].at(0).y * m_vecPrime[i].at(2).y;
@@ -194,7 +205,12 @@ void ArchHeight::doComputeChangeTime()
         std::sort(m_vecChangeTime[i].begin(), m_vecChangeTime[i].end());
     }
 }
-
+/***
+* @brief        : 根据拱高分段时间计算相应的拱高分段点
+* @in_param : none
+* @out_param : none
+* @return : none
+*/
 void ArchHeight::doComputePiecePoint()
 {
     for (size_t i = 0; i < m_vecPieceTime.size(); ++i)
@@ -209,7 +225,12 @@ void ArchHeight::doComputePiecePoint()
         }
     }
 }
-
+/***
+* @brief        : 根据自适应采样的时间计算数据点
+* @in_param : none
+* @out_param : none
+* @return : none
+*/
 void ArchHeight::doComputeAdaptPoint()
 {
     for (size_t i = 0; i < m_vecAdaptTime.size(); ++i)
@@ -224,7 +245,12 @@ void ArchHeight::doComputeAdaptPoint()
         }
     }
 }
-
+/***
+* @brief        : 计算两点之间的拱高
+* @in_param : index:曲线指标    begintime:起始时间      endtime:终止时间
+* @out_param : dArchHeight:拱高
+* @return : double类型的拱高dArchHeight
+*/
 double ArchHeight::doComputeArchHeight(const size_t& index, const double& begintime, const double& endtime)
 {
 
@@ -258,11 +284,11 @@ double ArchHeight::doComputeArchHeight(const size_t& index, const double& begint
         double dDistX2 = 0;
 
         //  NOTE:如果两个都有效则取较大的拱高
-        if(dX1>begintime && dX1<endtime)
+        if(dX1 > begintime && dX1 < endtime)
         {
             dDistX1 = doComputePointLineDist(index, begintime, endtime, dX1);
         }
-        if(dX2 > begintime && dX2 <endtime)
+        if(dX2 > begintime && dX2 < endtime)
         {
             dDistX2 = doComputePointLineDist(index, begintime, endtime, dX2);
         }
@@ -270,11 +296,17 @@ double ArchHeight::doComputeArchHeight(const size_t& index, const double& begint
     }
     return dArchHeight;
 }
+
 double ArchHeight::Distance(const Point& point1, const Point& point2)
 {
     return sqrt(pow(point1.x - point2.x, 2) + pow(point1.y - point2.y, 2));
 }
-//  NOTE:曲线和导矢都是连续变化的  但是拱高不清楚
+/***
+* @brief        : 从零开始,逐步计算拱高,当拱高合适时,计算下一个点.
+* @in_param : none
+* @out_param : none
+* @return : none
+*/
 void ArchHeight::doIsoHeightSeg()
 {
     for (size_t i = 0; i < m_vecSrcPoint.size(); ++i)
@@ -299,11 +331,12 @@ void ArchHeight::doIsoHeightSeg()
     }
 
 }
-//  可以根据拱高分段的结果不同  进行不同精度的自适应采样
-//  两点距离比较大  放比较多的点   两点距离较近  放比较多的点？？？
-//  这样的话   还要自适应采样干什么  直接根据拱高分段均匀多放点就行了??
+//  我们可以根据这个初步自适应采样的结果 对其再进行操作
+//  使得在拐点和变化比较大的地方能够更好的描述曲线
+//  自适应随机采样方法？？？
 void ArchHeight::doAdaptiveSampling()
 {
+    const int INSERTPOINTS = 6;
     for (size_t i = 0; i < m_vecAdaptTime.size(); ++i)
     {
         size_t size = m_vecPieceTime[i].size();
@@ -311,26 +344,19 @@ void ArchHeight::doAdaptiveSampling()
         {
             Point beginPoint = doComputePoint(i, m_vecPieceTime[i][j]);
             Point endPoint = doComputePoint(i, m_vecPieceTime[i][j + 1]);
-            int dRatio = static_cast<int>(Distance(beginPoint, endPoint) / m_dHeight);
-            dRatio = dRatio>m_dThresholdRatio?m_dThresholdRatio:dRatio;
+            double dRatio = Distance(beginPoint, endPoint) / (m_dHeight*m_dThresholdRatio);
+            dRatio = dRatio>1.0?dRatio:1;
+            int iInsertPointNum = static_cast<int>(ceil(dRatio*INSERTPOINTS));
             double dBeginTime = m_vecPieceTime[i].at(j);
-            double dGap = (m_vecPieceTime[i].at(j+1) - m_vecPieceTime[i].at(j))/8;
+            double dGap = (m_vecPieceTime[i].at(j+1) - m_vecPieceTime[i].at(j))/iInsertPointNum;
             m_vecAdaptTime[i].emplace_back(dBeginTime);
-            for (int k = 1; k < 8; ++k)
+            for (int k = 1; k < iInsertPointNum; ++k)
             {
-                m_vecAdaptTime[i].emplace_back(dBeginTime+k*dGap);
+                m_vecAdaptTime[i].emplace_back(dBeginTime + k * dGap);
             }
         }
     } 
-    //Point point1 = doComputePoint(i, m_vecPieceTime[k]);
-    //Point point2 = doComputePoint(i, m_vecPieceTime[k + 1]);
-    //if(Distance(point1,point2)>m_dDistThreshold)
 }
-
-
-
-
-
 
 
 Point ArchHeight::doComputePoint(const size_t& index, const double& t)
