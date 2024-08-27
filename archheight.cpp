@@ -118,10 +118,10 @@ void ArchHeight::getDesPoint()
     }
 }
 /***
-* @brief        : ¼ÆËãµãµ½Ö±ÏßµÄ¾àÀë£¬¼´¹°¸ß
-* @in_param : index:µÚ¼¸ÌõÇúÏß   begintime:ÆğÊ¼Ê±¼äµã     endtime:ÖÕÖ¹Ê±¼ä    heighttime:¹°¸ßµãËùÔÚµÄÊ±¼ä
-* @out_param : dDist:µãµ½Ö±ÏßµÄ¾àÀë
-* @return : doubleÀàĞÍµÄdDist
+* @brief        : è®¡ç®—ç‚¹åˆ°ç›´çº¿çš„è·ç¦»ï¼Œå³æ‹±é«˜
+* @in_param : index:ç¬¬å‡ æ¡æ›²çº¿   begintime:èµ·å§‹æ—¶é—´ç‚¹     endtime:ç»ˆæ­¢æ—¶é—´    heighttime:æ‹±é«˜ç‚¹æ‰€åœ¨çš„æ—¶é—´
+* @out_param : dDist:ç‚¹åˆ°ç›´çº¿çš„è·ç¦»
+* @return : doubleç±»å‹çš„dDist
 */
 double ArchHeight::doComputePointLineDist(const size_t& index, const double& begintime, const double& endtime, const double& heighttime)
 {
@@ -147,7 +147,7 @@ double ArchHeight::doComputePointLineDist(const size_t& index, const double& beg
     return dDist;
 }
 /***
-* @brief        : ¼ÆËãÇúÏß±ä»¯ÂÊ·¢Éú¸Ä±äµÄÊ±¼äµã
+* @brief        : è®¡ç®—æ›²çº¿å˜åŒ–ç‡å‘ç”Ÿæ”¹å˜çš„æ—¶é—´ç‚¹
 * @in_param : none
 * @out_param : none
 * @return : none
@@ -156,7 +156,7 @@ void ArchHeight::doComputeChangeTime()
 {
     for (size_t i = 0; i < m_iIndex; ++i) {
         m_vecChangeTime[i].emplace_back(0);
-        //  ¼ÆËã X ²ÎÊı·½³Ìµ¥µ÷ĞÔ±ä»¯µÄÁ½¸öÊ±¼äµã    
+        //  è®¡ç®— X å‚æ•°æ–¹ç¨‹å•è°ƒæ€§å˜åŒ–çš„ä¸¤ä¸ªæ—¶é—´ç‚¹    
         if (true) {
             if (m_vecPrime[0].at(0).x != 0) {
                 double delta = m_vecPrime[i].at(1).x * m_vecPrime[i].at(1).x - 4 * m_vecPrime[i].at(0).x * m_vecPrime[i].at(2).x;
@@ -178,7 +178,7 @@ void ArchHeight::doComputeChangeTime()
                 }
             }
         }
-        //  ¼ÆËã Y ²ÎÊı·½³Ìµ¥µ÷ĞÔ±ä»¯µÄÁ½¸öÊ±¼äµã
+        //  è®¡ç®— Y å‚æ•°æ–¹ç¨‹å•è°ƒæ€§å˜åŒ–çš„ä¸¤ä¸ªæ—¶é—´ç‚¹
         if (true) {
             if (m_vecPrime[i].at(0).y != 0) {
                 double delta = m_vecPrime[i].at(1).y * m_vecPrime[i].at(1).y - 4 * m_vecPrime[i].at(0).y * m_vecPrime[i].at(2).y;
@@ -200,13 +200,13 @@ void ArchHeight::doComputeChangeTime()
                 }
             }
         }
-        //      ¶Ôµ¥µ÷ĞÔ±ä»¯µÄÊ±¼ä½øĞĞÄæÅÅĞò   ´Ó0µ½1µÄË³ĞòÅÅĞò
+        //      å¯¹å•è°ƒæ€§å˜åŒ–çš„æ—¶é—´è¿›è¡Œé€†æ’åº   ä»0åˆ°1çš„é¡ºåºæ’åº
         m_vecChangeTime[i].emplace_back(1);
         std::sort(m_vecChangeTime[i].begin(), m_vecChangeTime[i].end());
     }
 }
 /***
-* @brief        : ¸ù¾İ¹°¸ß·Ö¶ÎÊ±¼ä¼ÆËãÏàÓ¦µÄ¹°¸ß·Ö¶Îµã
+* @brief        : æ ¹æ®æ‹±é«˜åˆ†æ®µæ—¶é—´è®¡ç®—ç›¸åº”çš„æ‹±é«˜åˆ†æ®µç‚¹
 * @in_param : none
 * @out_param : none
 * @return : none
@@ -226,7 +226,7 @@ void ArchHeight::doComputePiecePoint()
     }
 }
 /***
-* @brief        : ¸ù¾İ×ÔÊÊÓ¦²ÉÑùµÄÊ±¼ä¼ÆËãÊı¾İµã
+* @brief        : æ ¹æ®è‡ªé€‚åº”é‡‡æ ·çš„æ—¶é—´è®¡ç®—æ•°æ®ç‚¹
 * @in_param : none
 * @out_param : none
 * @return : none
@@ -239,6 +239,7 @@ void ArchHeight::doComputeAdaptPoint()
         {
             continue;
         }
+        std::cout << m_vecAdaptTime[i].size() << std::endl;
         for(size_t j = 0; j < m_vecAdaptTime[i].size(); ++j)
         {
             m_vecAdaptPoint[i].emplace_back(doComputePoint(i, m_vecAdaptTime[i][j]));
@@ -246,10 +247,10 @@ void ArchHeight::doComputeAdaptPoint()
     }
 }
 /***
-* @brief        : ¼ÆËãÁ½µãÖ®¼äµÄ¹°¸ß
-* @in_param : index:ÇúÏßÖ¸±ê    begintime:ÆğÊ¼Ê±¼ä      endtime:ÖÕÖ¹Ê±¼ä
-* @out_param : dArchHeight:¹°¸ß
-* @return : doubleÀàĞÍµÄ¹°¸ßdArchHeight
+* @brief        : è®¡ç®—ä¸¤ç‚¹ä¹‹é—´çš„æ‹±é«˜
+* @in_param : index:æ›²çº¿æŒ‡æ ‡    begintime:èµ·å§‹æ—¶é—´      endtime:ç»ˆæ­¢æ—¶é—´
+* @out_param : dArchHeight:æ‹±é«˜
+* @return : doubleç±»å‹çš„æ‹±é«˜dArchHeight
 */
 double ArchHeight::doComputeArchHeight(const size_t& index, const double& begintime, const double& endtime)
 {
@@ -283,7 +284,7 @@ double ArchHeight::doComputeArchHeight(const size_t& index, const double& begint
         double dX2 = (-dFirstDegree - sqrt(delta)) / (2 * dSecDegree);
         double dDistX2 = 0;
 
-        //  NOTE:Èç¹ûÁ½¸ö¶¼ÓĞĞ§ÔòÈ¡½Ï´óµÄ¹°¸ß
+        //  NOTE:å¦‚æœä¸¤ä¸ªéƒ½æœ‰æ•ˆåˆ™å–è¾ƒå¤§çš„æ‹±é«˜
         if(dX1 > begintime && dX1 < endtime)
         {
             dDistX1 = doComputePointLineDist(index, begintime, endtime, dX1);
@@ -297,12 +298,68 @@ double ArchHeight::doComputeArchHeight(const size_t& index, const double& begint
     return dArchHeight;
 }
 
+double ArchHeight::doComputeArchHeightTime(const size_t &index, const double &begintime, const double &endtime)
+{
+    double dArchHeightTime = -1;
+
+    Point beginPoint = doComputePoint(index, begintime);
+    Point endPoint = doComputePoint(index, endtime);
+
+    double dKx = endPoint.x -beginPoint.x ;
+    double dKy = endPoint.y - beginPoint.y;
+    double dA = m_vecPrime[index][0].x;
+    double dB = m_vecPrime[index][1].x;
+    double dC = m_vecPrime[index][2].x;
+    double dD = m_vecPrime[index][0].y;
+    double dE = m_vecPrime[index][1].y;
+    double dF = m_vecPrime[index][2].y;
+
+    double dSecDegree = dD * dKx - dA * dKy;
+    double dFirstDegree = dE * dKx - dB * dKy;
+    double dConstTrem = dF * dKx - dC * dKy;
+    double delta = dFirstDegree * dFirstDegree - 4 * dSecDegree * dConstTrem;
+
+    if (delta >= 0)
+    {
+        double dX1 = (-dFirstDegree + sqrt(delta)) / (2 * dSecDegree);
+        double dDistX1 = 0;
+        bool bIsValidX1 = false;
+        double dX2 = (-dFirstDegree - sqrt(delta)) / (2 * dSecDegree);
+        double dDistX2 = 0;
+        bool bIsValidX2 = false;
+        //  NOTE:å¦‚æœä¸¤ä¸ªéƒ½æœ‰æ•ˆåˆ™å–è¾ƒå¤§çš„æ‹±é«˜
+        if(dX1 > begintime && dX1 < endtime)
+        {
+            dDistX1 = doComputePointLineDist(index, begintime, endtime, dX1);
+            bIsValidX1 = true;
+        }
+        if(dX2 > begintime && dX2 < endtime)
+        {
+            dDistX2 = doComputePointLineDist(index, begintime, endtime, dX2);
+            bIsValidX2 = true;
+        }
+        if(bIsValidX1 && bIsValidX2)
+        {
+            dArchHeightTime =  std::fabs(std::min(dDistX1,dDistX2) - dDistX1)<1e-4?dX1:dX2;
+        }
+        else if(bIsValidX1)
+        {
+            dArchHeightTime = dX1;
+        }
+        else
+        {
+            dArchHeightTime = dX2;
+        }
+    }
+    return dArchHeightTime;
+}
+
 double ArchHeight::Distance(const Point& point1, const Point& point2)
 {
     return sqrt(pow(point1.x - point2.x, 2) + pow(point1.y - point2.y, 2));
 }
 /***
-* @brief        : ´ÓÁã¿ªÊ¼,Öğ²½¼ÆËã¹°¸ß,µ±¹°¸ßºÏÊÊÊ±,¼ÆËãÏÂÒ»¸öµã.
+* @brief        : ä»é›¶å¼€å§‹,é€æ­¥è®¡ç®—æ‹±é«˜,å½“æ‹±é«˜åˆé€‚æ—¶,è®¡ç®—ä¸‹ä¸€ä¸ªç‚¹.
 * @in_param : none
 * @out_param : none
 * @return : none
@@ -312,16 +369,16 @@ void ArchHeight::doIsoHeightSeg()
     for (size_t i = 0; i < m_vecSrcPoint.size(); ++i)
     {
         m_vecPieceTime[i].emplace_back(0);
-        double dBegin = 0.0;                    //  NOTE:Ã¿ÌõÇúÏßµÄ¹°¸ß·Ö¶Î¶¼´Ó 0 ¿ªÊ¼
+        double dBegin = 0.0;                    //  NOTE:æ¯æ¡æ›²çº¿çš„æ‹±é«˜åˆ†æ®µéƒ½ä» 0 å¼€å§‹
         double dEnd = 0.0;
-        double dMaxRenge = 1.0;                 //  NOTE:Ã¿ÌõÇúÏßµÄ¹°¸ß·Ö¶Î¶¼ÒÔ 1 ½áÊø
-        double dSteps = 1e-2;                   //  NOTE:²½³¤ÉèÖÃ  ²½³¤Ò²Óë¹°¸ßÓĞ¹Ø
-        double dTol = 1e-1;                     //  NOTE:ÈİÈÌÎó²îÓëÒªÇóµÄ¹°¸ßÊÇÏà¹ØµÄ
+        double dMaxRenge = 1.0;                 //  NOTE:æ¯æ¡æ›²çº¿çš„æ‹±é«˜åˆ†æ®µéƒ½ä»¥ 1 ç»“æŸ
+        double dSteps = 1e-2;                   //  NOTE:æ­¥é•¿è®¾ç½®  æ­¥é•¿ä¹Ÿä¸æ‹±é«˜æœ‰å…³
+        double dTol = 1e-1;                     //  NOTE:å®¹å¿è¯¯å·®ä¸è¦æ±‚çš„æ‹±é«˜æ˜¯ç›¸å…³çš„
         while (dBegin < dMaxRenge && dEnd < 1.0)
         {
             dEnd += dSteps;
             double dArchHeight = doComputeArchHeight(i, dBegin, dEnd);
-            if ((m_dHeight - dArchHeight < dTol) || dArchHeight >= m_dHeight)   //  NOTE:µ±¼ÆËã¶øÀ´µÄ¹°¸ß´óÓÚ»ò½Ó½üÉè¶¨¹°¸ßÊ± ½áÊø
+            if ((m_dHeight - dArchHeight < dTol) || dArchHeight >= m_dHeight)   //  NOTE:å½“è®¡ç®—è€Œæ¥çš„æ‹±é«˜å¤§äºæˆ–æ¥è¿‘è®¾å®šæ‹±é«˜æ—¶ ç»“æŸ
             {
                 m_vecPieceTime[i].emplace_back(dEnd);
                 dBegin = dEnd;
@@ -331,31 +388,103 @@ void ArchHeight::doIsoHeightSeg()
     }
 
 }
-//  ÎÒÃÇ¿ÉÒÔ¸ù¾İÕâ¸ö³õ²½×ÔÊÊÓ¦²ÉÑùµÄ½á¹û ¶ÔÆäÔÙ½øĞĞ²Ù×÷
-//  Ê¹µÃÔÚ¹ÕµãºÍ±ä»¯±È½Ï´óµÄµØ·½ÄÜ¹»¸üºÃµÄÃèÊöÇúÏß
-//  ×ÔÊÊÓ¦Ëæ»ú²ÉÑù·½·¨£¿£¿£¿
+
+double ArchHeight::dotProduct(const Point &p1, const Point &p2)
+{
+    return p1.x * p2.x+p1.y * p2.y;
+}
+
+double ArchHeight::velocityAngleChange(const Point &point_1, const Point &point_2, const Point &point_3)
+{
+       Point p1p2 = point_2-point_1;
+       Point p2p3 = point_3-point_2;
+       double dDotProduct  = p1p2.x*p2p3.x+p1p2.y*p2p3.y;
+       return 1-(dDotProduct/(Distance(point_1,point_2)+Distance(point_2,point_3)));
+
+}
+
+
+
+double ArchHeight::circumRadius(const Point &point_1, const Point &point_2, const Point &point_3)
+{
+    double r = 0;
+
+    //1ã€åˆ©ç”¨å‘é‡å‰ä¹˜è®¡ç®—ä¸‰è§’å½¢é¢ç§¯
+    Point P21 = point_1-point_2;
+    Point P23 = point_3-point_2;
+    double dArea = std::fabs(P21.x*P23.y-P21.y*P23.x);
+
+    //2ã€åˆ©ç”¨ä½™å¼¦å®šç†è®¡ç®—ä¸­é—´ç‚¹å¯¹åº”çš„å«çš„æ­£å¼¦å€¼
+    double dA = Distance(point_1,point_2);
+    double dB = Distance(point_2,point_3);
+    double dC = Distance(point_1,point_3);
+    double dCosAlpha = (dA*dA+dB*dB-dC*dC)/(2*dA*dB);
+    double dSinAlpha = sqrt(1-dCosAlpha*dCosAlpha);
+
+    //3ã€åˆ©ç”¨ä¸‰è§’å½¢é¢ç§¯ä¸ä¸¤å€æ­£å¼¦å€¼ä¹‹æ¯”è®¡ç®—ä¸‰è§’å½¢å¤–æ¥åœ†åŠå¾„
+    r = dArea/(2*dSinAlpha);
+
+    return r;
+}
+
+double ArchHeight::doComputeWeightedFunction(const size_t &index, const double &begintime, const double &endtime)
+{
+    //  NOTE:è®¾ç½®ç®—æ³•çš„ä¸€äº›å¸¸æ•°
+    double RADIUS = 10;
+    double MAXLENGTHRATIO = 10;
+    double dOmega1 = 0.2;
+    double dOmega2 = 0.3;
+    double dOmega3 = 1-dOmega1-dOmega2;
+
+    double result = 0;
+
+    //  NOTE:è®¡ç®—å„ä¸ªæƒé‡
+    //  1ã€è®¡ç®—å¼§é•¿çš„æƒé‡
+    double dArchHeightTime = doComputeArchHeightTime(index,begintime,endtime);
+    double dArchHeight = doComputePointLineDist(index,begintime,endtime,dArchHeightTime);
+    std::cout << "BeginTime : " << begintime << "\t" << "EndTime : " << endtime << "\t" << "HeightTime : " << dArchHeightTime << "\t" << "ArchHeight : " << dArchHeight <<std::endl;
+    double dDistance = Distance(doComputePoint(index,begintime),doComputePoint(index,endtime));
+    double dLengthRatio = dDistance/(dArchHeight*MAXLENGTHRATIO);
+
+    //  2ã€è®¡ç®—é€Ÿåº¦å˜åŒ–
+    Point point1 = doComputePoint(index,begintime);
+    Point point2 = doComputePoint(index,dArchHeightTime);
+    Point point3 = doComputePoint(index,endtime);
+    double dVelocityAngleChange = velocityAngleChange(point1,point2,point3);
+    std::cout << "VelocityAngleChange : " << dVelocityAngleChange << std::endl;
+    //  3ã€è®¡ç®—æ›²ç‡åŠå¾„
+    double dCircumRadius = circumRadius(point1,point2,point3)-RADIUS;
+    std::cout << "CircumRadius : " << dCircumRadius << std::endl;
+
+
+    //  4ã€è®¡ç®—åŠ æƒå‡½æ•°å’Œ
+    result = dOmega1 * std::max(1.0,dLengthRatio)+dOmega2*dVelocityAngleChange+dOmega3*dCircumRadius;
+    return result;
+}
+//  æˆ‘ä»¬å¯ä»¥æ ¹æ®è¿™ä¸ªåˆæ­¥è‡ªé€‚åº”é‡‡æ ·çš„ç»“æœ å¯¹å…¶å†è¿›è¡Œæ“ä½œ
+//  ä½¿å¾—åœ¨æ‹ç‚¹å’Œå˜åŒ–æ¯”è¾ƒå¤§çš„åœ°æ–¹èƒ½å¤Ÿæ›´å¥½çš„æè¿°æ›²çº¿
+//  è‡ªé€‚åº”éšæœºé‡‡æ ·æ–¹æ³•ï¼Ÿï¼Ÿï¼Ÿ
 void ArchHeight::doAdaptiveSampling()
 {
-    const int INSERTPOINTS = 6;
-    for (size_t i = 0; i < m_vecAdaptTime.size(); ++i)
+    double THREDHOLDS = 5e4;
+
+    double dBegin = 0.0;
+    double dSteps = 1e-2;
+    double dEnd = dBegin+dSteps;
+    for(size_t index = 0;index<m_iIndex;++index)
     {
-        size_t size = m_vecPieceTime[i].size();
-        for (size_t j = 0; j <  size - 1; ++j)
+        while(dEnd<1.0 )
         {
-            Point beginPoint = doComputePoint(i, m_vecPieceTime[i][j]);
-            Point endPoint = doComputePoint(i, m_vecPieceTime[i][j + 1]);
-            double dRatio = Distance(beginPoint, endPoint) / (m_dHeight*m_dThresholdRatio);
-            dRatio = dRatio>1.0?dRatio:1;
-            int iInsertPointNum = static_cast<int>(ceil(dRatio*INSERTPOINTS));
-            double dBeginTime = m_vecPieceTime[i].at(j);
-            double dGap = (m_vecPieceTime[i].at(j+1) - m_vecPieceTime[i].at(j))/iInsertPointNum;
-            m_vecAdaptTime[i].emplace_back(dBeginTime);
-            for (int k = 1; k < iInsertPointNum; ++k)
+            double dWeightSum = doComputeWeightedFunction(index,dBegin,dEnd);
+            std::cout << "WeightSum : " << dWeightSum << std::endl;
+            if(dWeightSum>THREDHOLDS)
             {
-                m_vecAdaptTime[i].emplace_back(dBeginTime + k * dGap);
+                m_vecAdaptTime[index].emplace_back(dEnd);
+                dBegin = dEnd;
             }
+            dEnd+=dSteps;
         }
-    } 
+    }
 }
 
 
