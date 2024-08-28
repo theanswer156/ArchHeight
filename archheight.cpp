@@ -399,7 +399,7 @@ double ArchHeight::velocityAngleChange(const Point &point_1, const Point &point_
        Point p1p2 = point_2-point_1;
        Point p2p3 = point_3-point_2;
        double dDotProduct  = p1p2.x*p2p3.x+p1p2.y*p2p3.y;
-       return 1-(dDotProduct/(Distance(point_1,point_2)+Distance(point_2,point_3)));
+       return 1-(dDotProduct/(Distance(point_1,point_2)*Distance(point_2,point_3)));
 
 }
 
@@ -424,16 +424,16 @@ double ArchHeight::circumRadius(const Point &point_1, const Point &point_2, cons
     //3、利用三角形面积与两倍正弦值之比计算三角形外接圆半径
     r = dArea/(2*dSinAlpha);
 
-    return r;
+    return 1/r;
 }
 
 double ArchHeight::doComputeWeightedFunction(const size_t &index, const double &begintime, const double &endtime)
 {
     //  NOTE:设置算法的一些常数
-    double RADIUS = 10;
-    double MAXLENGTHRATIO = 10;
-    double dOmega1 = 0.2;
-    double dOmega2 = 0.3;
+    double RADIUS = 1e-3;
+    double MAXLENGTHRATIO = 20;
+    double dOmega1 = 0.1;
+    double dOmega2 = 0.4;
     double dOmega3 = 1-dOmega1-dOmega2;
 
     double result = 0;
@@ -453,7 +453,7 @@ double ArchHeight::doComputeWeightedFunction(const size_t &index, const double &
     double dVelocityAngleChange = velocityAngleChange(point1,point2,point3);
     std::cout << "VelocityAngleChange : " << dVelocityAngleChange << std::endl;
     //  3、计算曲率半径
-    double dCircumRadius = circumRadius(point1,point2,point3)-RADIUS;
+    double dCircumRadius = RADIUS/circumRadius(point1,point2,point3);
     std::cout << "CircumRadius : " << dCircumRadius << std::endl;
 
 
@@ -466,18 +466,18 @@ double ArchHeight::doComputeWeightedFunction(const size_t &index, const double &
 //  自适应随机采样方法？？？
 void ArchHeight::doAdaptiveSampling()
 {
-    double THREDHOLDS = 5e4;
+    double THREDHOLDS = 0.5;
 
-    double dBegin = 0.0;
     double dSteps = 1e-2;
-    double dEnd = dBegin+dSteps;
     for(size_t index = 0;index<m_iIndex;++index)
     {
-        while(dEnd<1.0 )
+        double dBegin = 0.0;
+        double dEnd = dBegin+dSteps;
+        while(dEnd<=1.0 )
         {
             double dWeightSum = doComputeWeightedFunction(index,dBegin,dEnd);
             std::cout << "WeightSum : " << dWeightSum << std::endl;
-            if(dWeightSum>THREDHOLDS)
+            if(dWeightSum<THREDHOLDS || (dEnd-dBegin)>1e-1)
             {
                 m_vecAdaptTime[index].emplace_back(dEnd);
                 dBegin = dEnd;

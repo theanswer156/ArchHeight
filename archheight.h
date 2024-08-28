@@ -93,7 +93,7 @@ public:
     vector<int> m_ivecPascalTri = { 0,1,3,3,1 };
 
 private:
-    size_t m_iIndex = 1;
+    size_t m_iIndex = 2;
     double m_dHeight = 5;
     double m_dPrecis = 1e-2;
     int m_dThresholdRatio = 60;
